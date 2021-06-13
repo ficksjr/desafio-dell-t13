@@ -5,23 +5,29 @@ from math import radians, sin, cos, sqrt, asin
 
 TabelaTaxis = []  # declarando a Array vazia 'TabelaTaxis' que constará as informações de cada ponto de taxi
 
-with open("pythonfiles/pontos_taxi.csv") as csvfile:
+with open("pontos_taxi.csv") as csvfile:
     reader = csv.reader(csvfile, delimiter=";", quoting=csv.QUOTE_ALL)
 
     # transformando linhas do .csv em 'Array múltiplo'.
     for row in reader:
         TabelaTaxis.append(row)
-        
-print(len(TabelaTaxis))
 
+def virgulinha(indequis):
+    for linha in range(1, len(TabelaTaxis)):
+        if "," in (TabelaTaxis[linha][indequis]):
+            TabelaTaxis[linha][indequis] = float(TabelaTaxis[linha][indequis].replace(",","."))
+
+virgulinha(6)
+virgulinha(7)
 
 #Colocando o MenuPrincipal como uma function.
 def MenuApp():
     print("""\n======= ESCOLHA UMA OPÇÃO =====
-1. Listar todos os pontos de Táxi
-2. Informar a minha localização
-3. Consultar rota
-4. Terminar o programa\n""")
+1. Listar todos os pontos de Táxi.
+2. Informar a minha localização.
+3. Consultar os 3 pontos de táxi mais próximos.
+4. Consultar pontos de táxi por logradouro.
+5. Terminar o programa\n""")
     
 def haversine(lat1, lon1, lat2, lon2):
     R = 6372.8  # Earth radius in kilometers
@@ -45,10 +51,10 @@ while True:
     while True:
         try:
             escolha = int(input('Digite a opção aqui: '))
-            if escolha not in (1, 2, 3, 4):
-                raise ValueError('Valor fora do limite permitido\n')
+            if escolha not in (1, 2, 3, 4, 5):
+                raise ValueError('Valor inválido: Utilizar somente números de 1 a 5.\n')
         except ValueError as e:
-            print('Valor inválido: Utilizar somente números de 1 a 4.\n')
+            print(e)
         else:
             break
 
@@ -102,12 +108,8 @@ while True:
         terceiroPonto = 0
         
         
-        
-        for i in range(1, len(TabelaTaxis) - 1):
-            
-            
-            
-    if escolha == 4:  # término do loop
+
+    if escolha == 5:  # término do loop
         break
 
 print('Fim do programa!')
