@@ -75,9 +75,8 @@ while True:
                     latitudeStr = "-"+latitudeStr
                 if "," in latitudeStr:
                     latitudeStr = latitudeStr.replace(",",".")
-                global latitude1 
-                latitude1 = -30.0011
-                #latitude1 = float(latitudeStr)
+                global latitude1
+                latitude1 = float(latitudeStr)
                 latitudeInt = int(latitude1)
                 if latitudeInt not in range(-32,-28):
                     raise ValueError('Valor de latitude não condiz com região metropolitana de Porto Alegre\n')
@@ -94,8 +93,7 @@ while True:
                 if "," in longitudeStr:
                     longitudeStr = longitudeStr.replace(",",".")
                 global longitude1
-                #longitude1 = float(longitudeStr)
-                longitude1 = -51.1
+                longitude1 = float(longitudeStr)
                 longitudeInt = int(longitude1)
                 if longitudeInt not in range(-52,-48):
                     raise ValueError('Valor de latitude não condiz com região metropolitana de Porto Alegre\n')
@@ -128,25 +126,35 @@ while True:
                 terceiroPonto = pontoTaxi
                 indiceTabelaTerceiro = linha
         print("As três paradas de táxi mais próximas são as seguintes: ")
-        print('1- A ', str(primeiroPonto)[:4], "km.  ", end="")
+        print('1- A ', str(primeiroPonto)[:4], "km. ", end="")
         for colunas in range(2,6):
             print(str(TabelaTaxis[indiceTabelaPrimeiro][colunas]), end="-")
         print()
-        print('2- A ', str(segundoPonto)[:4], " km.", end="")
+        print('2- A ', str(segundoPonto)[:4], "km. ", end="")
         for colunas in range(2,6):
             print(str(TabelaTaxis[indiceTabelaSegundo][colunas]), end="-")
         print()
-        print('3- A ', str(terceiroPonto)[:4], " km.", end="")
+        print('3- A ', str(terceiroPonto)[:4], "km. ", end="")
         for colunas in range(2,6):
             print(str(TabelaTaxis[indiceTabelaTerceiro][colunas]), end="-")
         print()
     
     if escolha == 4:
-        logradouroUsuario = input("Informe o nome do logradouro que deseja fazer a busca: ").upper()
-        if logradouroUsuario in TabelaTaxis
+        comLogradouro = 0
+        while True:
+            try:
+                logradouroUsuario = input("Informe o nome do logradouro que deseja fazer a busca: ").upper().strip()
+                for linha in range(0, len(TabelaTaxis)):
+                    if logradouroUsuario in TabelaTaxis[linha][4]:
+                        print("Parada encontrada: ",TabelaTaxis[linha][2:6])
+                        comLogradouro += linha
+                if comLogradouro == 0:
+                    print("O logradouro informado não possui paradas, tente novamente.")     
+            except ValueError or NameError or TypeError as e:
+                print(e)
+            else:
+                break          
 
-        
-        
         
     if escolha == 5:  # término do loop
         break
