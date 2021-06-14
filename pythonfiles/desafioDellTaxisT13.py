@@ -12,13 +12,11 @@ with open("pontos_taxi.csv") as csvfile:
     for row in reader:
         TabelaTaxis.append(row)
 
-def virgulinha(indequis):
+def virgulinha(coluna):
     for linha in range(1, len(TabelaTaxis)):
-        if "," in (TabelaTaxis[linha][indequis]):
-            TabelaTaxis[linha][indequis] = float(TabelaTaxis[linha][indequis].replace(",","."))
+        if "," in (TabelaTaxis[linha][coluna]):
+            TabelaTaxis[linha][coluna] = float(TabelaTaxis[linha][coluna].replace(",","."))
 
-virgulinha(6)
-virgulinha(7)
 
 #Colocando o MenuPrincipal como uma function.
 def MenuApp():
@@ -41,6 +39,8 @@ def haversine(lat1, lon1, lat2, lon2):
     c = 2 * asin(sqrt(a))
  
     return R * c
+
+
 
 
 # início do loop para escolha de opções
@@ -75,8 +75,10 @@ while True:
                     latitudeStr = "-"+latitudeStr
                 if "," in latitudeStr:
                     latitudeStr = latitudeStr.replace(",",".")
-                    latitude1 = float(latitudeStr)
-                    latitudeInt = int(latitude1)
+                global latitude1 
+                latitude1 = -30.0011
+                #latitude1 = float(latitudeStr)
+                latitudeInt = int(latitude1)
                 if latitudeInt not in range(-32,-28):
                     raise ValueError('Valor de latitude não condiz com região metropolitana de Porto Alegre\n')
             except ValueError as e:
@@ -91,8 +93,10 @@ while True:
                     longitudeStr = "-"+longitudeStr
                 if "," in longitudeStr:
                     longitudeStr = longitudeStr.replace(",",".")
-                    longitude1 = float(longitudeStr)
-                    longitudeInt = int(longitude1)
+                global longitude1
+                #longitude1 = float(longitudeStr)
+                longitude1 = -51.1
+                longitudeInt = int(longitude1)
                 if longitudeInt not in range(-52,-48):
                     raise ValueError('Valor de latitude não condiz com região metropolitana de Porto Alegre\n')
             except ValueError as e:
@@ -102,14 +106,48 @@ while True:
             
     # configurando escolha de MENU #3 onde se define as 3 paradas de táxi mais próximos do usuário.
     if escolha == 3:
+        primeiroPonto = 100.0
+        segundoPonto = 100.0
+        terceiroPonto = 100.0
+        latitude2 = 0.0
+        longitude2 = 0.0
+        indiceTabelaPrimeiro = 0
+        indiceTabelaSegundo = 0
+        indiceTabelaTerceiro = 0
+        for linha in range(1, len(TabelaTaxis)):
+            latitude2 = float(TabelaTaxis[linha][6].replace(",","."))
+            longitude2 = float(TabelaTaxis[linha][7].replace(",","."))
+            pontoTaxi = haversine(latitude1, longitude1, latitude2, longitude2)
+            if pontoTaxi < primeiroPonto:
+                primeiroPonto = pontoTaxi
+                indiceTabelaPrimeiro = linha
+            elif primeiroPonto < pontoTaxi < segundoPonto:
+                segundoPonto = pontoTaxi
+                indiceTabelaSegundo = linha
+            elif segundoPonto < pontoTaxi < terceiroPonto:
+                terceiroPonto = pontoTaxi
+                indiceTabelaTerceiro = linha
+        print("As três paradas de táxi mais próximas são as seguintes: ")
+        print('1- A ', str(primeiroPonto)[:4], "km.  ", end="")
+        for colunas in range(2,6):
+            print(str(TabelaTaxis[indiceTabelaPrimeiro][colunas]), end="-")
+        print()
+        print('2- A ', str(segundoPonto)[:4], " km.", end="")
+        for colunas in range(2,6):
+            print(str(TabelaTaxis[indiceTabelaSegundo][colunas]), end="-")
+        print()
+        print('3- A ', str(terceiroPonto)[:4], " km.", end="")
+        for colunas in range(2,6):
+            print(str(TabelaTaxis[indiceTabelaTerceiro][colunas]), end="-")
+        print()
+    
+    if escolha == 4:
+        logradouroUsuario = input("Informe o nome do logradouro que deseja fazer a busca: ").upper()
+        if logradouroUsuario in TabelaTaxis
 
-        primeiroPonto = 0
-        segundoPonto = 0
-        terceiroPonto = 0
         
         
-
+        
     if escolha == 5:  # término do loop
         break
-
 print('Fim do programa!')
