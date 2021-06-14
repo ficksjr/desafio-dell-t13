@@ -12,11 +12,6 @@ with open("pontos_taxi.csv") as csvfile:
     for row in reader:
         TabelaTaxis.append(row)
 
-def virgulinha(coluna):
-    for linha in range(1, len(TabelaTaxis)):
-        if "," in (TabelaTaxis[linha][coluna]):
-            TabelaTaxis[linha][coluna] = float(TabelaTaxis[linha][coluna].replace(",","."))
-
 
 #Colocando o MenuPrincipal como uma function.
 def MenuApp():
@@ -26,7 +21,14 @@ def MenuApp():
 3. Consultar os 3 pontos de táxi mais próximos.
 4. Consultar pontos de táxi por logradouro.
 5. Terminar o programa\n""")
-    
+
+global latitude1
+latitude1 = 0
+global longitude1
+longitude1 = 0
+
+
+#definindo o a fórmula de Haversine como uma função    
 def haversine(lat1, lon1, lat2, lon2):
     R = 6372.8  # Earth radius in kilometers
  
@@ -41,20 +43,18 @@ def haversine(lat1, lon1, lat2, lon2):
     return R * c
 
 
-
-
 # início do loop para escolha de opções
 while True:
     MenuApp()
 
-    # tratamento de erros para que a escolha seja coerente com o solicitado.
+    # escolha do menu inicial com tratamento de erros para que a escolha seja coerente com o solicitado.
     while True:
         try:
             escolha = int(input('Digite a opção aqui: '))
             if escolha not in (1, 2, 3, 4, 5):
                 raise ValueError('Valor inválido: Utilizar somente números de 1 a 5.\n')
         except ValueError as e:
-            print(e)
+            print('Valor inválido: Utilizar somente números de 1 a 5.\n')
         else:
             break
 
@@ -68,6 +68,7 @@ while True:
         
         print('Informe sua localização:')
         
+        #trantando erros da latitude do usuário, caso existam, ajuste é automático.
         while True:
             try:
                 latitudeStr = str(input('Digite sua latitude :'))
@@ -75,16 +76,17 @@ while True:
                     latitudeStr = "-"+latitudeStr
                 if "," in latitudeStr:
                     latitudeStr = latitudeStr.replace(",",".")
-                global latitude1
+
                 latitude1 = float(latitudeStr)
                 latitudeInt = int(latitude1)
                 if latitudeInt not in range(-32,-28):
                     raise ValueError('Valor de latitude não condiz com região metropolitana de Porto Alegre\n')
-            except ValueError as e:
-                print(e)
+            except ValueError:
+                print("Digite um valor válido.")
             else:
                 break
-
+            
+        #trantando erros da longitude do usuário, caso existam, ajuste é automático.
         while True:
             try:
                 longitudeStr = str(input('Digite sua longitude :'))
@@ -92,7 +94,6 @@ while True:
                     longitudeStr = "-"+longitudeStr
                 if "," in longitudeStr:
                     longitudeStr = longitudeStr.replace(",",".")
-                global longitude1
                 longitude1 = float(longitudeStr)
                 longitudeInt = int(longitude1)
                 if longitudeInt not in range(-52,-48):
@@ -104,17 +105,24 @@ while True:
             
     # configurando escolha de MENU #3 onde se define as 3 paradas de táxi mais próximos do usuário.
     if escolha == 3:
-        primeiroPonto = 100.0
-        segundoPonto = 100.0
-        terceiroPonto = 100.0
+        #definindo as variáveis locais do escopo escolha 3
+        primeiroPonto = 1000.0
+        segundoPonto = 1000.0
+        terceiroPonto = 1000.0
         latitude2 = 0.0
         longitude2 = 0.0
         indiceTabelaPrimeiro = 0
         indiceTabelaSegundo = 0
         indiceTabelaTerceiro = 0
+        if latitude1 == 0 or longitude1 == 0:
+            print("Favor definir o valor de latitude e longitude no item 2 no Menu inicial antes de acessar o Menu 3.")
+            break
+        #tratamento de dados da tabela para não ocasionar erros
         for linha in range(1, len(TabelaTaxis)):
             latitude2 = float(TabelaTaxis[linha][6].replace(",","."))
             longitude2 = float(TabelaTaxis[linha][7].replace(",","."))
+        
+        #definição das 3 paradas mais próximas ao usuário com Haversine
             pontoTaxi = haversine(latitude1, longitude1, latitude2, longitude2)
             if pontoTaxi < primeiroPonto:
                 primeiroPonto = pontoTaxi
